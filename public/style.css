@@ -25,6 +25,7 @@ textarea{
 	background-color: #ffffff;
 	border: 1px solid;
 	border-radius: 5px;
+	overflow: auto;
 }
 
 li{

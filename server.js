@@ -21,25 +21,25 @@ app.get('/', (req, res)=>{
      res.sendFile('index.html');
 });
 
-app.post('/', (req, res)=>{
-    chat.find().exec((err, chat)=>{
-    	if(err){
-    		res.sendStatus(404);
-    	}else{
-    		res.json(chat);
-    	}
-    });
-});
+// app.post('/', (req, res)=>{
+//     chat.find().exec((err, chat)=>{
+//     	if(err){
+//     		res.sendStatus(404);
+//     	}else{
+//     		res.json(chat);
+//     	}
+//     });
+// });
 
-app.get('/load-archive', (req, res)=>{
-    chat.find().exec((err, chat)=>{
-    	if(err){
-    		res.sendStatus(404);
-    	}else{
-    		res.json(chat);
-    	}
-    });
-});
+// app.get('/load-archive', (req, res)=>{
+//     chat.find().exec((err, chat)=>{
+//     	if(err){
+//     		res.sendStatus(404);
+//     	}else{
+//     		res.json(chat);
+//     	}
+//     });
+// });
 
 
 app.delete('/clear-chat', (req, res)=>{
@@ -49,16 +49,21 @@ app.delete('/clear-chat', (req, res)=>{
      		return;
      	}
 
-     console.log('collection is removed')
+     console.log('collection is removed...')
      });
 });
 
 io.on('connection', (socket)=>{
 	console.log('Connected');
 	socket.on('chat', (msg)=> {
+        io.emit('chat', msg)
 		chat.create(msg).catch(err=> console.log(err));
 	});
 	socket.on('disconnect', ()=> console.log('Disconnected'));
+    chat.find().exec((err, chat)=>{
+        if(err){return;}
+        io.emit('chat-archive', chat);
+    });
 });
 
 server.listen(port, ()=> console.log('Server is running on port ' + port));
